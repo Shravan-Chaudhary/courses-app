@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const { Mongoose } = require('mongoose')
@@ -32,10 +33,18 @@ const Admin = mongoose.model('Admin', adminSchema)
 
 
 // Routes
-app.post('/api/admin/signup', (req, res) => {
-  const body = req.body
-  console.log(body)
-  res.send(body)
+app.post('/api/admin/signup', async (req, res) => {
+  const {email, password} = req.body
+  const admin = await Admin.findOne({email})
+  if(admin){
+    res.status(403).json({ 'message': 'Admin already exists by this email' })
+  }
+  const obj = {email,password}
+  const newAdmin = new Admin(obj)
+  await newAdmin.save()
+  const token = jwt.sign({email, role:'admin'}, process.env.JWTSECRET, {expiresIn: '1h'})
+
+  res.json({message: 'Admin created successfully', token})
 })
 
 
