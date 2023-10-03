@@ -31,8 +31,29 @@ const adminSchema = new mongoose.Schema({
 })
 const Admin = mongoose.model('Admin', adminSchema)
 
+const courseSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  price: Number,
+  imageLink: String,
+  published: Boolean,
+})
+const Course = mongoose.model('Course', courseSchema)
+
+// Authentication
+const jwtAuthentication = (req, res, next) => {
+  const authHeader = req.headers.authorization
+  if(authHeader){
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.JWTSECRET, (err, user) => {
+
+    })
+  }
+}
+
 
 // Routes
+    //Singup
 app.post('/api/admin/signup', async (req, res) => {
   const {email, password} = req.body
   const admin = await Admin.findOne({email})
@@ -45,6 +66,44 @@ app.post('/api/admin/signup', async (req, res) => {
   const token = jwt.sign({email, role:'admin'}, process.env.JWTSECRET, {expiresIn: '1h'})
 
   res.json({message: 'Admin created successfully', token})
+})
+    //Login
+app.post('/api/admin/login', async(req, res) => {
+  const { email, password } = req.headers
+  const admin = await Admin.findOne({ email })
+  if(!admin) {
+    res.status(404).json({message: 'Invalid email or password'})
+  }
+  const token = jwt.sign({email, role:'admin'}, process.env.JWTSECRET, {expiresIn: '1h'})
+  res.json({message: 'Logged in successfully', token})
+})
+
+    //CreateCourse
+app.post('/api/admin/courses',jwtAuthentication, async(req, res) => {
+  const newCourse = new Course(req.body)
+  await newCourse.save()
+  res.json({message: 'Course Created Successfully', courseId: newCourse._id})
+})
+
+    //Update Course
+app.put('/api/admin/courses/:id', async(req, res) => {
+  const courseId = req.query.params
+  const course = await Course.findOneAndUpdate(courseId, req.body, {new: true})
+  if(course) {
+    res.json({message: 'Course Updated Successfully', course})
+  }
+  else{
+    res.status(404).json({message: 'Course not found'})
+  }
+})
+
+    //Get all courses
+app.get('/api/admin/courses', async(req, res) => {
+  const courses = await Course.find({})
+  if(!courses) {
+    res.send(404).json({message: 'No courses to show'})
+  }
+  res.json(courses)
 })
 
 
