@@ -133,6 +133,17 @@ app.post("/api/users/signup", async (req, res) => {
   res.json({ message: "User created Successfully", token });
 });
 
+// Login
+app.post('/api/users/login', async (req, res) => {
+  const {email, password} = req.body
+  const user = await User.findOne({email})
+  if(!user){
+    res.status(403).json({message: 'User not found'})
+  }
+  const token = jwt.sign({email, role: 'user'}, process.env.JWTSECRET)
+  res.json({message: "Logged In successfully", token})
+})
+
 app.listen(process.env.PORT, () => {
   console.log(`Example app listening on port ${process.env.PORT}`);
 });
