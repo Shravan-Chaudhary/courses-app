@@ -144,6 +144,12 @@ app.post('/api/users/login', async (req, res) => {
   res.json({message: "Logged In successfully", token})
 })
 
+// Get courses
+app.get('/api/users/courses', async (req, res) => {
+  const courses = await Course.find({published:true})
+  res.json(courses)
+})
+
 app.listen(process.env.PORT, () => {
   console.log(`Example app listening on port ${process.env.PORT}`);
 });
