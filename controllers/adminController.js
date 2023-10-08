@@ -83,7 +83,7 @@ exports.updateCourse =  async (req, res) => {
   }
 }
 
-exports.getCourses = async (req, res) => {
+exports.getCoursesAdmin = async (req, res) => {
   try {
     const courses = await Course.find({})
     if (!courses || courses.length === 0) {

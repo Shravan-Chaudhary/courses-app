@@ -2,10 +2,10 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const Admin = require('../models/adminModel')
-const { signUpAdmin, logInAdmin, createCourse, updateCourse, getCourses } = require('../controllers/adminController')
+const { signUpAdmin, logInAdmin, createCourse, updateCourse, getCoursesAdmin } = require('../controllers/adminController')
 
 // Authentication
-const jwtAuthentication = async (req, res, next) => {
+const adminJwtAuthentication = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization
     if (!authHeader) {
@@ -28,8 +28,8 @@ const jwtAuthentication = async (req, res, next) => {
 
 router.post('/signup', signUpAdmin)
 router.post('/login', logInAdmin)
-router.post('/courses', jwtAuthentication, createCourse)
-router.put('/courses/:id', jwtAuthentication, updateCourse)
-router.get('/courses', jwtAuthentication, getCourses)
+router.post('/courses', adminJwtAuthentication, createCourse)
+router.put('/courses/:id', adminJwtAuthentication, updateCourse)
+router.get('/courses', adminJwtAuthentication, getCoursesAdmin)
 
 module.exports = router

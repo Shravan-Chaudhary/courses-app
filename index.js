@@ -1,20 +1,17 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const adminRoutes = require('./routes/adminRoutes')
 const userRoutes = require('./routes/userRoutes')
 
-// TODO - Refactor server code into different files
 // TODO - Axios for fetching
-// const mongoose = require('mongoose')
 require('dotenv').config()
-
 // Middlewares
 app.use(cors())
 app.use(bodyParser.json())
+app.use(express.urlencoded({extended: false}))
 
 // Db  Connect
 const connectDb = async () => {
