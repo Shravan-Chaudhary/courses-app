@@ -10,7 +10,7 @@ exports.signUpAdmin =  async (req, res) => {
     // Check if admin already exists
     const adminExists = await Admin.findOne({ email })
     if (adminExists) {
-      res.status(403).json({ message: 'Admin already exists by this email' })
+     return res.status(403).json({ message: 'Admin already exists by this email' })
     }
 
     // Create a new admin instance
@@ -93,6 +93,20 @@ exports.getCoursesAdmin = async (req, res) => {
   } catch (err) {
     console.error('Get Course Error: ' + err)
     res.status(500).json({ message: 'Failed to get courses' })
+  }
+}
+
+exports.getCourseAdmin = async (req, res) => {
+  try{
+    const courseId = req.params.id
+    const course = await Course.findById(courseId)
+    if(!course){
+      res.status(404).json({message: 'No Course found by this id'})
+    }
+    res.json(course)
+  }
+  catch (err) {
+    console.error(`getCourseAdmin: ${err}`)
   }
 }
 

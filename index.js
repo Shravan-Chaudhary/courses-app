@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 const adminRoutes = require('./routes/adminRoutes')
 const userRoutes = require('./routes/userRoutes')
 
-// TODO - Axios for fetching
 require('dotenv').config()
 // Middlewares
 app.use(cors())
